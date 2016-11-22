@@ -1,0 +1,4 @@
+swrve:
+  url: http://localhost:8097
+
+spring.profiles.include: dev

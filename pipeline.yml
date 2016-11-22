@@ -1,0 +1,13 @@
+pipelines:
+  - type: microservice_sonar
+  - type: microservice_pr
+  - type: microservice
+    groupId: io.fourfinanceit
+    notificationEmails:
+      - Pavel.Taruts@4finance.com
+      - Dmitry.Shesterikov@4finance.com
+    instances:
+      - realm: es
+        product: vivus
+        smokeTestingPort: 8342
+        productionReady: true

@@ -1,0 +1,23 @@
+swrve:
+  url: https://eu-service.swrve.com
+  messagePrototypePushKeys:
+    'Hello':
+      IOS: d36ae023-010c-4f3a-9bd7-9924a754b4b4
+      ANDROID: f31690cb-a763-4259-af18-6aed41afd9ed
+    'Good bye':
+      IOS: d36ae023-010c-4f3a-9bd7-9924a754b4b4
+      ANDROID: f31690cb-a763-4259-af18-6aed41afd9ed
+
+spring:
+  datasource:
+    
+    # auto server
+    #url: jdbc:h2:~/loans/push_service_auto;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;MVCC=true
+    
+    # in memory
+    url: jdbc:h2:mem:push_service;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;MVCC=true;LOCK_TIMEOUT=10000;AUTOCOMMIT=true
+    
+    username: sa
+    password:
+
+org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate

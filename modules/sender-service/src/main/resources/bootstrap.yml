@@ -1,0 +1,24 @@
+# This configuration is used as default !!!
+#
+#
+# You can set your custom bootstrap configuration by running service with 'spring.cloud.bootstrap.name' property:
+#
+#   eg. -Dspring.cloud.bootstrap.name=bootstrap-vivus-pl
+#
+# Note that in this case bootstrap-vivus-pl.yml file should exist
+#
+spring:
+  profiles:
+    include: springCloud # remove it if you want to use the deprecated `microservice.json` approach
+  application:
+    name: io/fourfinanceit/push-services/sender
+
+spring.cloud.zookeeper:
+  discovery.root: /es
+  dependencies:
+    documents:
+      path: io/fourfinanceit/documents-microservice
+      stubs: io.fourfinanceit:documents-microservice-stubs
+
+stubrunner:
+  use-microservice-definitions: true

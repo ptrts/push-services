@@ -1,0 +1,46 @@
+import org.springframework.boot.gradle.run.BootRunTask
+
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/release' }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "io.spring.gradle:dependency-management-plugin:0.5.6.RELEASE"
+    }
+}
+
+dependencies {
+
+    compile project(':receiver-api')
+    compile project(':swrve-api')
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile "org.springframework:spring-web:$springVersion"
+
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+}
+
+springBoot {
+    mainClass = 'io.fourfinanceit.push.test.load.big.BigLoadTestApp'
+}
+
+task bootRunBig(type: BootRunTask, group: 'application') {
+    doFirst {
+        main = 'io.fourfinanceit.push.test.load.big.BigLoadTestApp'
+        systemProperty 'spring.profiles.active', 'dev'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+}
+
+task bootRunSmall(type: BootRunTask, group: 'application') {
+    doFirst {
+        main = 'io.fourfinanceit.push.test.load.small.SmallLoadTestApp'
+        systemProperty 'spring.profiles.active', 'dev'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+}

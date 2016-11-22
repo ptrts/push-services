@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.fourfinanceit.push.config.JmsReceiveAutoConfiguration,\
+io.fourfinanceit.push.config.JmsSendAutoConfiguration

@@ -1,0 +1,5 @@
+swrve:
+  url: https://eu-service.swrve.com
+  test: true
+
+spring.profiles.include: dev

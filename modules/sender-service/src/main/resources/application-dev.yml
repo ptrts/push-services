@@ -1,0 +1,14 @@
+swrve:
+  messagePrototypePushKeys:
+    'Hello':
+      IOS: d36ae023-010c-4f3a-9bd7-9924a754b4b4
+      ANDROID: f31690cb-a763-4259-af18-6aed41afd9ed
+    'Good bye':
+      IOS: d36ae023-010c-4f3a-9bd7-9924a754b4b4
+      ANDROID: f31690cb-a763-4259-af18-6aed41afd9ed
+
+jms:
+  broker:
+    url: tcp://localhost:61616
+    user: admin
+    password: admin

@@ -1,0 +1,30 @@
+push:
+  failedMessagesQueueName: push-services-failed
+  retry:
+    maxAttempts: 3
+    delayInSeconds: 60
+    
+swrve:
+  path: /push
+  test: false
+  averageProcessingMillis: 3000
+  delayMillis: 100
+  threadsPortion: 30
+
+jms:
+  receive:
+    enable: true
+    sessionFactory:
+      cacheSize: 1
+  send:
+    enable: true
+    sessionFactory:
+      cacheSize: 50
+
+# @EnableTracing in SpringCloudMicroSetup explicitly turns on ZipkinAutoConfiguration, so it sort of stops being AUTO 
+# configuration and it's @AutoConfigureBefore(TraceAutoConfiguration.class) starts to be ignored, and we start to get 
+# an exception, that there are two SpanReporter in the context and so it can't be autowired
+# 
+# Another thing - we don't have Zipkin in our infrastructure yet. 
+# 
+spring.zipkin.enabled: false

@@ -1,0 +1,13 @@
+spring.main.web-environment: false
+
+load-test.sender:
+    
+    # iOS
+    user-id: A0889837-BF49-475D-AC16-760BDA16FA2D
+    
+    threads: 100
+    messages-per-thread: 500
+    
+    pool-size: 100
+    
+    port: 8095

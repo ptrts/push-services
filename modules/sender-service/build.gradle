@@ -1,0 +1,179 @@
+import org.ajoberstar.grgit.operation.OpenOp
+import org.springframework.boot.gradle.run.BootRunTask
+
+apply plugin: 'spring-boot'
+apply plugin: 'maven-publish'
+apply plugin: "io.spring.dependency-management"
+
+buildscript {
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+        classpath 'com.blogspot.toomuchcoding:gradle-test-profiler:0.3.2', {
+            exclude group: 'org.spockframework'
+        }
+        classpath 'org.ajoberstar:gradle-git:1.4.2'
+
+        if (project.hasProperty('coverage')) {
+            classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
+            classpath 'org.sonarqube.gradle:gradle-sonarqube-plugin:1.1'
+        }
+    }
+}
+
+configurations {
+    all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                // To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
+                // all modularized Groovy jars are replaced with groovy-all.jar by default.
+                if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != 'groovy-all') {
+                    details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    compile project(':sender-api')
+    compile project(':jms-spring-boot-starter')
+    compile project(':swrve-api')
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework:spring-context-support'
+    compile 'org.springframework.data:spring-data-commons:1.12.6.RELEASE'
+
+    compile "org.springframework:spring-jms:$springVersion"
+    compile 'org.apache.activemq:artemis-jms-client:1.5.0'
+
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.apache.tomcat.embed:tomcat-embed-el'
+    compile 'org.yaml:snakeyaml'
+    compile 'org.hibernate:hibernate-validator'
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+    compile 'net.sf.ehcache:ehcache:2.10.1'
+    compile "com.ofg:micro-infra-spring-boot-starter:$microInfraSpringVersion"
+
+    runtime 'cglib:cglib-nodep:3.2.1'
+    runtime 'org.objenesis:objenesis:2.2'
+
+    testCompile 'com.jayway.awaitility:awaitility:1.6.5'
+    testCompile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+    testCompile "com.jayway.restassured:rest-assured:$restAssuredVersion"
+    testCompile "com.jayway.restassured:spring-mock-mvc:$restAssuredVersion"
+    testCompile 'com.github.tomakehurst:wiremock'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile "com.ofg:micro-infra-spring-test:$microInfraSpringVersion"
+
+    testCompile 'org.spockframework:spock-spring'
+}
+
+task bootRunDevSwrveMock(type: BootRunTask, group: 'application') {
+    
+    description 'Run the application in DEV mode'
+
+    doFirst {
+        main = project.mainClassName
+
+        classpath = sourceSets.main.runtimeClasspath
+
+        systemProperty 'APP_ENV', System.getenv().APP_ENV ?: 'dev'
+        systemProperty 'spring.profiles.active', 'swrve-mock'
+        
+        systemProperty 'server.port', '8096'
+
+        systemProperty 'com.sun.management.jmxremote', ''
+        systemProperty 'com.sun.management.jmxremote.port', '9011'
+        systemProperty 'com.sun.management.jmxremote.local.only', 'false'
+        systemProperty 'com.sun.management.jmxremote.authenticate', 'false'
+        systemProperty 'com.sun.management.jmxremote.ssl', 'false'
+        systemProperty 'java.rmi.server.hostname', '127.0.0.1'
+    }
+}
+
+task bootRunDevSwrveSandbox(type: BootRunTask, group: 'application') {
+
+    description 'Run the application for load testing'
+
+    doFirst {
+        main = project.mainClassName
+
+        classpath = sourceSets.main.runtimeClasspath
+
+        systemProperty 'APP_ENV', System.getenv().APP_ENV ?: 'dev'
+        systemProperty 'spring.profiles.active', 'swrve-sandbox'
+
+        systemProperty 'server.port', '8096'
+
+        systemProperty 'com.sun.management.jmxremote', ''
+        systemProperty 'com.sun.management.jmxremote.port', '9011'
+        systemProperty 'com.sun.management.jmxremote.local.only', 'false'
+        systemProperty 'com.sun.management.jmxremote.authenticate', 'false'
+        systemProperty 'com.sun.management.jmxremote.ssl', 'false'
+        systemProperty 'java.rmi.server.hostname', '127.0.0.1'
+    }
+}
+
+task bootRunProd(type: BootRunTask, group: 'application') {
+    description 'Run the application in PROD mode'
+
+    doFirst {
+        main = project.mainClassName
+        classpath = sourceSets.main.runtimeClasspath
+        systemProperty 'APP_ENV', System.getenv().APP_ENV ?: 'prod'
+        systemProperty 'CONFIG_FOLDER', System.getenv().CONFIG_FOLDER ?: 'properties'
+        systemProperty 'server.port', '8096'
+        systemProperty 'spring.profiles.active', 'prod'
+    }
+}
+
+task bootRunTestPipeline(type: BootRunTask, group: 'application') {
+    description 'Run the application in test-pipeline environment'
+
+    doFirst {
+        main = project.mainClassName
+        classpath = sourceSets.main.runtimeClasspath
+        systemProperty 'APP_ENV', 'test-pipeline'
+        systemProperty 'CONFIG_FOLDER', System.getenv().CONFIG_FOLDER ?: 'properties'
+        systemProperty 'server.port', '8096'
+        systemProperty 'spring.profiles.active', 'prod'
+    }
+}
+
+task bootRunStagePipeline(type: BootRunTask, group: 'application') {
+    description 'Run the application in stage-pipeline environment'
+
+    doFirst {
+        main = project.mainClassName
+        classpath = sourceSets.main.runtimeClasspath
+        systemProperty 'APP_ENV', 'stage-pipeline'
+        systemProperty 'CONFIG_FOLDER', System.getenv().CONFIG_FOLDER ?: 'properties'
+        systemProperty 'server.port', '8096'
+        systemProperty 'spring.profiles.active', 'prod'
+    }
+}
+
+task addHashFile << {
+    def repo = new OpenOp(dir: rootDir).call()
+
+    def gitPropertiesMap = [
+            'git.branch'     : repo.branch.current.name,
+            'git.commit.id'  : repo.head().abbreviatedId,
+            'git.commit.time': new Date(repo.head().time * 1000L).format("yyyy-MM-dd'T'HH:mm:ssZ")
+    ]
+
+    new File(sourceSets.main.output.resourcesDir, 'git.properties').withWriter {
+        writer -> gitPropertiesMap.each { writer.println "$it.key=$it.value" }
+    }
+}
+
+apply from: 'gradle/test.gradle'
+apply from: 'gradle/misc.gradle'
+apply from: 'gradle/release.gradle'
+
+apply from: "../../spring-boot-properties.gradle"

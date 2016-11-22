@@ -1,0 +1,18 @@
+spring.main.web-environment: false
+
+load-test:
+  big:
+    
+    # iOS
+    user-id: A0889837-BF49-475D-AC16-760BDA16FA2D
+    
+    threads: 20
+    messages-per-thread: 100000
+    
+    pool-size: 100
+    
+  swrve:
+    url: "https://eu-service.swrve.com/push"
+    fake: false
+    
+server.port: 8096

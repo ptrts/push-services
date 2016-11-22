@@ -1,0 +1,10 @@
+apply plugin: "io.spring.dependency-management"
+
+apply from: "../../spring-boot-properties.gradle"
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter:$springBootVersion"
+    compile "org.springframework:spring-jms:$springVersion"
+    compile "org.apache.activemq:artemis-jms-client:1.5.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.8.5"
+}

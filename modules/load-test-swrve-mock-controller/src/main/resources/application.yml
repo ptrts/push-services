@@ -1,0 +1,29 @@
+load-test.swrve.mock:
+    url: "https://eu-service.swrve.com"
+    fake: true
+    
+server.port: 8097
+
+spring:
+  
+  datasource:
+        
+    # auto server
+    url: jdbc:h2:~/loans/push_services_load_test_2_dev_auto;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;MVCC=true
+    
+    username: sa
+    password:
+    
+    minimumIdle: 2 
+    maximumPoolSize: 20
+    maxLifetime: 0
+    idleTimeout: 10000
+    connectionTimeout: 10000
+
+  jpa:
+    open-in-view: false  
+    show-sql: false
+    hibernate.ddl-auto: create
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate4.SpringSessionContext
